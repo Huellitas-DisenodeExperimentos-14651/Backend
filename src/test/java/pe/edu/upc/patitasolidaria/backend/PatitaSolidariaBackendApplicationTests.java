@@ -9,3 +9,4 @@ public class PatitaSolidariaBackendApplicationTests {
     void contextLoads() {
     }
 }
+    
