@@ -2,17 +2,19 @@ services:
   - type: web
     name: patita-solidaria-backend
     env: java
-    buildCommand: ./mvnw clean install
-    startCommand: java -jar target/BackEnd-0.0.1-SNAPSHOT.jar
     plan: free
+    buildCommand: ./mvnw clean install
+    startCommand: java -jar target/*.jar
     envVars:
-      - key: PORT
-        value: 8080
       - key: JDBC_DATABASE_URL
-        value: your-database-url
+        fromDatabase:
+          name: dbPatitaSolidaria
+          property: connectionString
       - key: JDBC_DATABASE_USERNAME
-        value: your-username
+        fromDatabase:
+          name: dbPatitaSolidaria
+          property: user
       - key: JDBC_DATABASE_PASSWORD
-        value: your-password
-      - key: JWT_SECRET
-        value: your-secret-key
+        fromDatabase:
+          name: dbPatitaSolidaria
+          property: password
