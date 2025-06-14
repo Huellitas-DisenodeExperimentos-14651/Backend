@@ -1,5 +1,6 @@
 package pe.edu.upc.patitasolidaria.backend.adoptions.interfaces.rest.resources;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import pe.edu.upc.patitasolidaria.backend.adoptions.application.internal.AdoptionService;
@@ -11,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/adoptions")
 @CrossOrigin(origins = "*")
+@Tag(name = "Adoptions", description = "Adoptions Management Endpoints")
 public class AdoptionController {
 
     private final AdoptionService adoptionService;
