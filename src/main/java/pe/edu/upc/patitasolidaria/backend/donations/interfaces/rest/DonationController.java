@@ -1,7 +1,5 @@
 package pe.edu.upc.patitasolidaria.backend.donations.interfaces.rest;
 
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -9,6 +7,8 @@ import pe.edu.upc.patitasolidaria.backend.donations.application.internal.command
 import pe.edu.upc.patitasolidaria.backend.donations.application.internal.queries.DonationQueryService;
 import pe.edu.upc.patitasolidaria.backend.donations.domain.model.aggregates.Donation;
 import pe.edu.upc.patitasolidaria.backend.donations.domain.model.commands.CreateDonationCommand;
+import pe.edu.upc.patitasolidaria.backend.donations.domain.model.commands.UpdateDonationCommand;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 import java.util.List;
 
@@ -25,16 +25,27 @@ public class DonationController {
         this.queryService = queryService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<Donation>> getAllDonations() {
+        return ResponseEntity.ok(queryService.getAllDonations());
+    }
+
     @PostMapping
-    public ResponseEntity<Donation> createDonation(@Valid @RequestBody CreateDonationCommand command) {
+    public ResponseEntity<Donation> createDonation(@RequestBody CreateDonationCommand command) {
         Donation donation = commandService.createDonation(command);
         return new ResponseEntity<>(donation, HttpStatus.CREATED);
     }
 
-    @GetMapping
-    public ResponseEntity<List<Donation>> getAllDonations() {
-        List<Donation> donations = queryService.getAllDonations();
-        return new ResponseEntity<>(donations, HttpStatus.OK);
+    @PutMapping("/{id}")
+    public ResponseEntity<Donation> updateDonation(@PathVariable Long id, @RequestBody UpdateDonationCommand command) {
+        Donation updated = commandService.updateDonation(id, command);
+        return ResponseEntity.ok(updated);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDonation(@PathVariable Long id) {
+        commandService.deleteDonation(id);
+        return ResponseEntity.noContent().build();
     }
 }
 

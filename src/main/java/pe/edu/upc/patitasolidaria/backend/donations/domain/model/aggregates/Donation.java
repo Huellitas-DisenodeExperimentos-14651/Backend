@@ -72,5 +72,22 @@ public class Donation {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
+
+    public void setDonorName(String donorName) {
+        this.donorName = donorName;
+    }
+
 }
 
