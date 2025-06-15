@@ -1,0 +1,8 @@
+package pe.edu.upc.patitasolidaria.backend.donations.application.internal.commandservices;
+
+import pe.edu.upc.patitasolidaria.backend.donations.domain.model.aggregates.Donation;
+import pe.edu.upc.patitasolidaria.backend.donations.domain.model.commands.CreateDonationCommand;
+
+public interface DonationCommandService {
+    Donation createDonation(CreateDonationCommand command);
+}
