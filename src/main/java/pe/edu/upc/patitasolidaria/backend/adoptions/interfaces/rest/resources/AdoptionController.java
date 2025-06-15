@@ -1,11 +1,13 @@
 package pe.edu.upc.patitasolidaria.backend.adoptions.interfaces.rest.resources;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import pe.edu.upc.patitasolidaria.backend.adoptions.application.internal.AdoptionService;
-import pe.edu.upc.patitasolidaria.backend.adoptions.domain.model.Adoption;
-import pe.edu.upc.patitasolidaria.backend.adoptions.domain.model.AdoptionFilter;
+import pe.edu.upc.patitasolidaria.backend.adoptions.application.internal.service.AdoptionService;
+import pe.edu.upc.patitasolidaria.backend.adoptions.domain.model.entity.Adoption;
+import pe.edu.upc.patitasolidaria.backend.adoptions.domain.model.valueobject.VaccinationRecord;
+import pe.edu.upc.patitasolidaria.backend.adoptions.domain.model.filter.AdoptionFilter;
 
 import java.util.List;
 
@@ -22,8 +24,8 @@ public class AdoptionController {
         this.adoptionService = adoptionService;
     }
 
-    // GET
     @GetMapping
+    @Operation(summary = "List all adoptions or filter by attributes")
     public List<Adoption> getAllAdoptions(
             @RequestParam(required = false) String gender,
             @RequestParam(required = false) String size,
@@ -44,20 +46,20 @@ public class AdoptionController {
         return adoptionService.getByFilter(filter);
     }
 
-    // POST
     @PostMapping
+    @Operation(summary = "Create a new adoption")
     public Adoption createAdoption(@RequestBody Adoption adoption) {
         return adoptionService.save(adoption);
     }
 
-    // GET
     @GetMapping("/{id}")
+    @Operation(summary = "Get adoption by ID")
     public Adoption getAdoptionById(@PathVariable Long id) {
         return adoptionService.getById(id);
     }
 
-    // DELETE
     @DeleteMapping("/{id}")
+    @Operation(summary = "Delete adoption by ID")
     public String deleteAdoption(@PathVariable Long id) {
         boolean removed = adoptionService.deleteById(id);
         if (removed) {
@@ -67,8 +69,8 @@ public class AdoptionController {
         }
     }
 
-    // PUT
     @PutMapping("/{id}")
+    @Operation(summary = "Update adoption by ID")
     public Adoption updateAdoption(@PathVariable Long id, @RequestBody Adoption updatedAdoption) {
         Adoption result = adoptionService.update(id, updatedAdoption);
         if (result != null) {
@@ -76,5 +78,21 @@ public class AdoptionController {
         } else {
             throw new RuntimeException("Mascota no encontrada (id = " + id + ")");
         }
+    }
+
+    @GetMapping("/by-vaccine")
+    @Operation(summary = "Get adoptions by vaccine name")
+    public List<Adoption> getAdoptionsByVaccine(@RequestParam String vaccine) {
+        return adoptionService.getByVaccine(vaccine);
+    }
+
+    // NUEVO: Actualizar vacunas solamente
+    @PutMapping("/{id}/vaccines")
+    @Operation(summary = "Update vaccination record of an adoption")
+    public Adoption updateVaccinationRecord(
+            @PathVariable Long id,
+            @RequestBody VaccinationRecord updatedRecord
+    ) {
+        return adoptionService.updateVaccinationRecord(id, updatedRecord);
     }
 }
