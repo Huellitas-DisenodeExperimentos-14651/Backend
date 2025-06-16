@@ -13,7 +13,7 @@ public record ProfileResource(
         String profilePic,
         String bio,
         int capacity,
-        List<String> animalsAvailable,
+        int animalsAvailable,
         String homeType,
         String previousExperience
 ) {}

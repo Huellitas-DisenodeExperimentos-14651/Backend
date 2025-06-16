@@ -22,11 +22,13 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     @Override
     public Long handle(CreateProfileCommand command) {
         var profile = new Profile(command);
+
         try {
-            this.profileRepository.save(profile);
+            profileRepository.save(profile);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while saving profile: " + e.getMessage());
         }
+
         return profile.getId();
     }
 
@@ -34,11 +36,12 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     public Optional<Profile> handle(UpdateProfileCommand command) {
         var profileId = command.profileId();
 
-        if (!this.profileRepository.existsById(profileId)) {
+        if (!profileRepository.existsById(profileId)) {
             throw new IllegalArgumentException("Profile with id " + profileId + " does not exist");
         }
 
-        var profileToUpdate = this.profileRepository.findById(profileId).get();
+        var profileToUpdate = profileRepository.findById(profileId).get();
+
         profileToUpdate.updateInformation(
                 command.name(),
                 command.email(),
@@ -55,7 +58,7 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
         );
 
         try {
-            var updatedProfile = this.profileRepository.save(profileToUpdate);
+            var updatedProfile = profileRepository.save(profileToUpdate);
             return Optional.of(updatedProfile);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while updating profile: " + e.getMessage());
@@ -66,12 +69,12 @@ public class ProfileCommandServiceImpl implements ProfileCommandService {
     public void handle(DeleteProfileCommand command) {
         var profileId = command.profileId();
 
-        if (!this.profileRepository.existsById(profileId)) {
+        if (!profileRepository.existsById(profileId)) {
             throw new IllegalArgumentException("Profile with id " + profileId + " does not exist");
         }
 
         try {
-            this.profileRepository.deleteById(profileId);
+            profileRepository.deleteById(profileId);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while deleting profile: " + e.getMessage());
         }

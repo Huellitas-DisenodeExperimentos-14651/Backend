@@ -6,7 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.commands.CreateProfileCommand;
 import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.valueobjects.*;
-
 import pe.edu.upc.patitasolidaria.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
 import java.util.List;
@@ -21,12 +20,12 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     @Column(name = "name", length = 60, nullable = false)
     private String name;
 
-    @Getter
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "email", length = 100, nullable = false))
     private Email email;
 
-    @Getter
     @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "address", length = 255, nullable = false))
     private Address address;
 
     @Getter
@@ -71,12 +70,10 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     private String previousExperience;
 
     public Profile() {
+        // Default constructor for JPA
     }
 
     public Profile(CreateProfileCommand command) {
-        if (command == null) {
-            throw new IllegalArgumentException("Command cannot be null");
-        }
         this.name = command.name();
         this.email = new Email(command.email());
         this.address = new Address(command.address());
@@ -105,42 +102,26 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
             String homeType,
             String previousExperience
     ) {
-        if (name != null && !name.trim().isEmpty()) {
-            this.name = name;
-        }
-        if (email != null && !email.trim().isEmpty()) {
-            this.email = new Email(email);
-        }
-        if (address != null && !address.trim().isEmpty()) {
-            this.address = new Address(address);
-        }
-        if (role != null) {
-            this.role = role;
-        }
-        if (paymentMethods != null) {
-            this.paymentMethods = paymentMethods;
-        }
-        if (preferences != null) {
-            this.preferences = preferences;
-        }
-        if (profilePic != null) {
-            this.profilePic = profilePic;
-        }
-        if (bio != null) {
-            this.bio = bio;
-        }
-        if (capacity != null) {
-            this.capacity = capacity;
-        }
-        if (animalsAvailable != null) {
-            this.animalsAvailable = animalsAvailable;
-        }
-        if (homeType != null) {
-            this.homeType = homeType;
-        }
-        if (previousExperience != null) {
-            this.previousExperience = previousExperience;
-        }
+        this.name = name;
+        this.email = new Email(email);
+        this.address = new Address(address);
+        this.role = role;
+        this.paymentMethods = paymentMethods;
+        this.preferences = preferences;
+        this.profilePic = profilePic;
+        this.bio = bio;
+        this.capacity = capacity;
+        this.animalsAvailable = animalsAvailable;
+        this.homeType = homeType;
+        this.previousExperience = previousExperience;
         return this;
+    }
+
+    public Email getEmail() {
+        return email;
+    }
+
+    public Address getAddress() {
+        return address;
     }
 }

@@ -31,5 +31,11 @@ public record CreateProfileCommand(
         if (role == null) {
             throw new IllegalArgumentException("Role is required");
         }
+        if (capacity != null && capacity < 0) {
+            throw new IllegalArgumentException("Capacity must be non-negative");
+        }
+        if (animalsAvailable != null && animalsAvailable < 0) {
+            throw new IllegalArgumentException("Animals available must be non-negative");
+        }
     }
 }

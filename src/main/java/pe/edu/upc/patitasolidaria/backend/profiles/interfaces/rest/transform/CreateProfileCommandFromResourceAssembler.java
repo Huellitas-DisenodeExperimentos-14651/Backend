@@ -10,13 +10,13 @@ public class CreateProfileCommandFromResourceAssembler {
                 resource.name(),
                 resource.email(),
                 resource.address(),
-                ProfileType.valueOf(resource.role().toUpperCase()), // Convierte el String a Enum ProfileType
+                ProfileType.valueOf(resource.role().toUpperCase()),
                 resource.paymentMethods(),
                 resource.preferences(),
                 resource.profilePic(),
                 resource.bio(),
                 resource.capacity(),
-                resource.animalsAvailable() != null ? resource.animalsAvailable().size() : 0, // Se interpreta como cantidad
+                resource.animalsAvailable(), // ✅ Ahora es int
                 resource.homeType(),
                 resource.previousExperience()
         );
