@@ -94,6 +94,7 @@ public class WebSecurityConfiguration {
       var cors = new CorsConfiguration();
       cors.setAllowedOrigins(List.of(
               "http://localhost:3000",
+              "http://localhost:4200",
               "https://patitasolidaria-front.onrender.com"
       ));
       cors.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE"));
