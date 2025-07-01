@@ -47,8 +47,18 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
    */
   @Override
   protected void doFilterInternal(@NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
-      throws ServletException, IOException {
+                                  @NonNull HttpServletResponse response,
+                                  @NonNull FilterChain filterChain)
+          throws ServletException, IOException {
+
+    String path = request.getRequestURI();
+
+    // ✅ Ignorar rutas públicas
+    if (path.startsWith("/api/v1/authentication/sign-in") ||
+            path.startsWith("/api/v1/authentication/sign-up")) {
+      filterChain.doFilter(request, response);
+      return;
+    }
 
     try {
       String token = tokenService.getBearerTokenFrom(request);
@@ -57,16 +67,16 @@ public class BearerAuthorizationRequestFilter extends OncePerRequestFilter {
         String username = tokenService.getUsernameFromToken(token);
         var userDetails = userDetailsService.loadUserByUsername(username);
         SecurityContextHolder.getContext()
-            .setAuthentication(
-                UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
-      }
-      else {
+                .setAuthentication(
+                        UsernamePasswordAuthenticationTokenBuilder.build(userDetails, request));
+      } else {
         LOGGER.info("Token is not valid");
       }
 
     } catch (Exception e) {
       LOGGER.error("Cannot set user authentication: {}", e.getMessage());
     }
+
     filterChain.doFilter(request, response);
   }
 }

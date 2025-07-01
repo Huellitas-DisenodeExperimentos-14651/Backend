@@ -4,12 +4,17 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.stereotype.Service;
 import pe.edu.upc.patitasolidaria.backend.iam.application.internal.outboundservices.hashing.HashingService;
 import pe.edu.upc.patitasolidaria.backend.iam.application.internal.outboundservices.tokens.TokenService;
+import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.JwtUserDetails;
 import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.User;
 import pe.edu.upc.patitasolidaria.backend.iam.domain.model.commands.SignInCommand;
 import pe.edu.upc.patitasolidaria.backend.iam.domain.model.commands.SignUpCommand;
 import pe.edu.upc.patitasolidaria.backend.iam.domain.services.UserCommandService;
 import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.persistence.jpa.repositories.RoleRepository;
 import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.persistence.jpa.repositories.UserRepository;
+import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.tokens.jwt.BearerTokenService;
+import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.aggregates.Profile;
+import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.valueobjects.ProfileType;
+import pe.edu.upc.patitasolidaria.backend.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
 
 import java.util.Optional;
 
@@ -25,17 +30,20 @@ public class UserCommandServiceImpl implements UserCommandService {
 
   private final UserRepository userRepository;
   private final HashingService hashingService;
-  private final TokenService tokenService;
-
+  private final BearerTokenService tokenService;
   private final RoleRepository roleRepository;
+  private final ProfileRepository profileRepository;
 
-  public UserCommandServiceImpl(UserRepository userRepository, HashingService hashingService,
-      TokenService tokenService, RoleRepository roleRepository) {
-
+  public UserCommandServiceImpl(UserRepository userRepository,
+                                HashingService hashingService,
+                                BearerTokenService tokenService,
+                                RoleRepository roleRepository,
+                                ProfileRepository profileRepository) {
     this.userRepository = userRepository;
     this.hashingService = hashingService;
     this.tokenService = tokenService;
     this.roleRepository = roleRepository;
+    this.profileRepository = profileRepository;
   }
 
   /**
@@ -52,12 +60,27 @@ public class UserCommandServiceImpl implements UserCommandService {
     var user = userRepository.findByUsername(command.username());
     if (user.isEmpty())
       throw new RuntimeException("User not found");
+
     if (!hashingService.matches(command.password(), user.get().getPassword()))
       throw new RuntimeException("Invalid password");
 
-    var token = tokenService.generateToken(user.get().getUsername());
+    // Obtener el perfil relacionado al usuario
+    var profile = user.get().getProfile();
+    if (profile == null)
+      throw new RuntimeException("User has no associated profile");
+
+    // Construir el JWT con username y profileId
+    var jwtUserDetails = new JwtUserDetails(
+            user.get().getUsername(),
+            user.get().getPassword(),
+            profile.getId()
+    );
+
+    var token = tokenService.generateToken(jwtUserDetails);
+
     return Optional.of(ImmutablePair.of(user.get(), token));
   }
+
 
   /**
    * Handle the sign-up command
@@ -71,13 +94,26 @@ public class UserCommandServiceImpl implements UserCommandService {
   public Optional<User> handle(SignUpCommand command) {
     if (userRepository.existsByUsername(command.username()))
       throw new RuntimeException("Username already exists");
+
     var roles = command.roles().stream()
-        .map(role ->
-            roleRepository.findByName(role.getName())
-                .orElseThrow(() -> new RuntimeException("Role name not found")))
-        .toList();
+            .map(role ->
+                    roleRepository.findByName(role.getName())
+                            .orElseThrow(() -> new RuntimeException("Role name not found")))
+            .toList();
+
+    // ✅ Crear el usuario sin perfil todavía
     var user = new User(command.username(), hashingService.encode(command.password()), roles);
-    userRepository.save(user);
-    return userRepository.findByUsername(command.username());
+    userRepository.save(user); // persistimos para generar ID
+
+    // ✅ Crear el perfil con toda la data
+    var profile = new Profile(command.profileCommand());
+    profile.setUser(user); // asociar el usuario
+    profileRepository.save(profile); // guardar el perfil
+
+    // ✅ Asociar el perfil al usuario y guardar nuevamente (opcional)
+    user.setProfile(profile);
+    userRepository.save(user); // opcional si quieres tener ambos lados sincronizados
+
+    return Optional.of(user);
   }
 }

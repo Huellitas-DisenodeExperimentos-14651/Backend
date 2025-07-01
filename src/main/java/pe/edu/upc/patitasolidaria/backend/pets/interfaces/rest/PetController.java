@@ -1,10 +1,12 @@
 package pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest;
 
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.JwtUserDetails;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.commands.DeletePetCommand;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.queries.GetAllPetsQuery;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.queries.GetPetByIdQuery;
@@ -15,6 +17,7 @@ import pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest.resources.PetReso
 import pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest.transform.CreatePetCommandFromResourceAssembler;
 import pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest.transform.PetResourceFromEntityAssembler;
 import pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest.transform.UpdatePetCommandFromResourceAssembler;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,8 +37,15 @@ public class PetController {
     }
 
     @PostMapping
-    public ResponseEntity<PetResource> createPet(@RequestBody CreatePetResource resource) {
-        var createPetCommand = CreatePetCommandFromResourceAssembler.toCommandFromResource(resource);
+    public ResponseEntity<PetResource> createPet(
+            @AuthenticationPrincipal JwtUserDetails userDetails,
+            @Valid @RequestBody CreatePetResource resource
+    ) {
+        // ✅ Extraer el profileId del JWT (autenticación)
+        Long profileId = userDetails.getProfileId();
+
+        // ✅ Construir el comando con el profileId
+        var createPetCommand = CreatePetCommandFromResourceAssembler.toCommandFromResource(resource, profileId);
         var petId = this.petCommandService.handle(createPetCommand);
 
         if (petId.equals(0L)) {
