@@ -14,4 +14,4 @@ services:
       - key: JDBC_DATABASE_PASSWORD
         value: "m2qa5P8QmDDlVUzqOEpAHYqix5nJNHzx"
       - key: JWT_SECRET
-        value: "MySuperSecretJWTKey123"
+        value: "Qv9wX8ZrT2pV6sMaY4tF3cJeL1kD0hBn"
