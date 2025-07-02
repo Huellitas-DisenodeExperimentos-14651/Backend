@@ -29,6 +29,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new IllegalStateException("El usuario no tiene un perfil asociado");
         }
 
-        return new JwtUserDetails(user.getUsername(), user.getPassword(), user.getProfile().getId());
+        return new JwtUserDetails(
+                user.getUsername(),
+                user.getPassword(),
+                user.getProfile().getId(),
+                user.getProfile().getRole().name() // ← "ADOPTER", "SHELTER", etc.
+        );
     }
 }

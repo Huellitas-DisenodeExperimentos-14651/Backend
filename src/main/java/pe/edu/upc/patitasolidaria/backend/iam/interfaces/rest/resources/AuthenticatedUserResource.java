@@ -4,5 +4,6 @@ public record AuthenticatedUserResource(
         Long id,
         String username,
         Long profileId,
-        String token
+        String token,
+        String role
 ) {}

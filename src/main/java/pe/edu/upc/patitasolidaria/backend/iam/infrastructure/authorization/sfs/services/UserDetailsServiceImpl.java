@@ -36,7 +36,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     return new JwtUserDetails(
             user.getUsername(),
             user.getPassword(),
-            user.getProfileId() // 👈 asegúrate que `User` tenga este método
+            user.getProfile().getId(),
+            user.getProfile().getRole().name() // "ADOPTER", "SHELTER", etc.
     );
   }
 }
