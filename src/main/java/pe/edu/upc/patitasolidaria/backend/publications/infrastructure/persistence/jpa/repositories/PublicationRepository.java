@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface PublicationRepository extends JpaRepository<Publication, Long> {
     List<Publication> findByPetId(Long petId); // Si deseas filtrar publicaciones por mascota relacionada
+    List<Publication> findByIsActiveTrue();
 }

@@ -1,12 +1,14 @@
 package pe.edu.upc.patitasolidaria.backend.pets.domain.model.aggregates;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.commands.CreatePetCommand;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.valueobjects.*;
 
+import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.aggregates.Profile;
 import pe.edu.upc.patitasolidaria.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
 @Entity
@@ -20,6 +22,7 @@ public class Pet extends AuditableAbstractAggregateRoot<Pet> {
     private String name;
 
     @Getter
+    @Min(0)
     @Column(name = "age")
     private Integer age;
 
@@ -60,21 +63,27 @@ public class Pet extends AuditableAbstractAggregateRoot<Pet> {
     @Column(name = "special_needs", length = 300)
     private String specialNeeds;
 
+    @Getter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "profile_id", nullable = false)
+    private Profile profile;
+
     public Pet() {
         this.status = PetStatus.AVAILABLE;
     }
 
-    public Pet(CreatePetCommand command) {
+    public Pet(CreatePetCommand command, Profile profile) {
         this.name = command.name();
         this.age = command.age();
         this.photo = command.photo();
         this.breed = new Breed(command.breed());
         this.size = command.size();
-        this.status = command.status();
+        this.status = PetStatus.AVAILABLE;
         this.description = command.description();
         this.healthStatus = new HealthStatus(command.healthStatus());
         this.vaccinationStatus = new VaccinationStatus(command.vaccinationStatus());
         this.specialNeeds = command.specialNeeds();
+        this.profile = profile;
     }
 
     public Pet updateInformation(

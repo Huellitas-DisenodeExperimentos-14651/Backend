@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import pe.edu.upc.patitasolidaria.backend.iam.domain.model.entities.Role;
+import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.aggregates.Profile;
 import pe.edu.upc.patitasolidaria.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
 
 import java.util.HashSet;
@@ -33,14 +34,21 @@ public class User extends AuditableAbstractAggregateRoot<User> {
   private String password;
 
   @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-  @JoinTable(	name = "user_roles",
-      joinColumns = @JoinColumn(name = "user_id"),
-      inverseJoinColumns = @JoinColumn(name = "role_id"))
+  @JoinTable(
+          name = "user_roles",
+          joinColumns = @JoinColumn(name = "user_id"),
+          inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles;
+
+  // 👇 Nueva relación con Profile
+  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @JoinColumn(name = "profile_id", referencedColumnName = "id")
+  private Profile profile;
 
   public User() {
     this.roles = new HashSet<>();
   }
+
   public User(String username, String password) {
     this.username = username;
     this.password = password;
@@ -52,24 +60,23 @@ public class User extends AuditableAbstractAggregateRoot<User> {
     addRoles(roles);
   }
 
-  /**
-   * Add a role to the user
-   * @param role the role to add
-   * @return the user with the added role
-   */
   public User addRole(Role role) {
     this.roles.add(role);
     return this;
   }
 
-  /**
-   * Add a list of roles to the user
-   * @param roles the list of roles to add
-   * @return the user with the added roles
-   */
   public User addRoles(List<Role> roles) {
     var validatedRoleSet = Role.validateRoleSet(roles);
     this.roles.addAll(validatedRoleSet);
     return this;
+  }
+
+  // 👇 Métodos auxiliares si quieres acceder directamente al ID del perfil
+  public Long getProfileId() {
+    return this.profile != null ? this.profile.getId() : null;
+  }
+
+  public Profile getProfile() {
+    return profile;
   }
 }

@@ -11,6 +11,7 @@ import pe.edu.upc.patitasolidaria.backend.publications.domain.services.Publicati
 import pe.edu.upc.patitasolidaria.backend.publications.domain.services.PublicationQueryService;
 import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.resources.CreatePublicationResource;
 import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.resources.PublicationResource;
+import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.resources.UpdatePublicationResource;
 import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.transform.CreatePublicationCommandFromResourceAssembler;
 import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.transform.PublicationResourceFromEntityAssembler;
 import pe.edu.upc.patitasolidaria.backend.publications.interfaces.rest.transform.UpdatePublicationCommandFromResourceAssembler;
@@ -77,7 +78,7 @@ public class PublicationController {
     }
 
     @PutMapping("/{publicationId}")
-    public ResponseEntity<PublicationResource> updatePublication(@PathVariable Long publicationId, @RequestBody PublicationResource resource) {
+    public ResponseEntity<PublicationResource> updatePublication(@PathVariable Long publicationId, @RequestBody UpdatePublicationResource resource) {
         var command = UpdatePublicationCommandFromResourceAssembler.toCommandFromResource(publicationId, resource);
         var optionalUpdated = this.publicationCommandService.handle(command);
 
@@ -91,5 +92,15 @@ public class PublicationController {
         var command = new DeletePublicationCommand(publicationId);
         this.publicationCommandService.handle(command);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<PublicationResource>> getActivePublications() {
+        var query = new GetActivePublicationsQuery();
+        var publications = publicationQueryService.handle(query);
+        var resources = publications.stream()
+                .map(PublicationResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+        return ResponseEntity.ok(resources);
     }
 }

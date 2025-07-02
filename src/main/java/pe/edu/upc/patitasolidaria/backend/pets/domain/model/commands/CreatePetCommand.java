@@ -13,7 +13,8 @@ public record CreatePetCommand(
         String description,
         String healthStatus,
         String vaccinationStatus,
-        String specialNeeds
+        String specialNeeds,
+        Long profileId // 👈 nuevo campo
 ){
     public CreatePetCommand {
         if (name == null || name.isBlank()) {
@@ -36,6 +37,18 @@ public record CreatePetCommand(
         }
         if (vaccinationStatus == null || vaccinationStatus.isBlank()) {
             throw new IllegalArgumentException("Vaccination status is required");
+        }
+        if (profileId == null) {
+            throw new IllegalArgumentException("Profile ID is required");
+        }
+        if (status != PetStatus.AVAILABLE) {
+            throw new IllegalArgumentException("New pets must have status AVAILABLE");
+        }
+        if (photo != null && photo.length() > 300) {
+            throw new IllegalArgumentException("Photo URL too long");
+        }
+        if (specialNeeds != null && specialNeeds.length() > 300) {
+            throw new IllegalArgumentException("Special needs description too long");
         }
     }
 }

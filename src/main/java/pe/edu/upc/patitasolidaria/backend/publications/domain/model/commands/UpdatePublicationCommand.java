@@ -5,5 +5,6 @@ public record UpdatePublicationCommand(
         String title,
         String description,
         String contactInfo,
-        String location
+        String location,
+        boolean isActive
 ) {}
