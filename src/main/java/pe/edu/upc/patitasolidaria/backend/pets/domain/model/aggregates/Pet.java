@@ -64,7 +64,7 @@ public class Pet extends AuditableAbstractAggregateRoot<Pet> {
     private String specialNeeds;
 
     @Getter
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "profile_id", nullable = false)
     private Profile profile;
 

@@ -10,4 +10,5 @@ public interface PetQueryService {
     List<Pet> handle(GetAllPetsQuery query);
     Optional<Pet> handle(GetPetByIdQuery query);
     List<Pet> handle(GetPetsByStatusQuery query);
+    List<Pet> handle(GetPetsByProfileIdQuery query);
 }
