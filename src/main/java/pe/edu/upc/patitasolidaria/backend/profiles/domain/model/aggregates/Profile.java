@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.User;
 import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.commands.CreateProfileCommand;
 import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.valueobjects.*;
 import pe.edu.upc.patitasolidaria.backend.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
@@ -42,7 +43,7 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     @Getter
     @ElementCollection
     @CollectionTable(name = "profile_preferences", joinColumns = @JoinColumn(name = "profile_id"))
-    @Column(name = "preference", length = 100)
+    @Column(name = "prefer  ence", length = 100)
     private List<String> preferences;
 
     @Getter
@@ -68,6 +69,10 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
     @Getter
     @Column(name = "previous_experience", length = 500)
     private String previousExperience;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private User user;
 
     public Profile() {
         // Default constructor for JPA
@@ -123,5 +128,13 @@ public class Profile extends AuditableAbstractAggregateRoot<Profile> {
 
     public Address getAddress() {
         return address;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

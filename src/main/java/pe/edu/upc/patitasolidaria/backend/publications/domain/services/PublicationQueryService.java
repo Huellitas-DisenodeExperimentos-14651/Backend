@@ -10,4 +10,5 @@ public interface PublicationQueryService {
     List<Publication> handle(GetAllPublicationsQuery query);
     Optional<Publication> handle(GetPublicationByIdQuery query);
     List<Publication> handle(GetPublicationsByPetIdQuery query);
+    List<Publication> handle(GetActivePublicationsQuery query); // ✅ nuevo
 }

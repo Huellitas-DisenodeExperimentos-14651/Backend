@@ -3,27 +3,38 @@ package pe.edu.upc.patitasolidaria.backend.iam.infrastructure.tokens.jwt;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.core.Authentication;
 import pe.edu.upc.patitasolidaria.backend.iam.application.internal.outboundservices.tokens.TokenService;
-import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.tokens.jwt.services.TokenServiceImpl;
+import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.JwtUserDetails;
 
 /**
- * This interface is a marker interface for the JWT token service.
- * It extends the {@link TokenService} interface.
- * This interface is used to inject the JWT token service in the {@link TokenServiceImpl} class.
+ * Interface for extracting and generating JWT bearer tokens.
  */
 public interface BearerTokenService extends TokenService {
 
   /**
-   * This method is responsible for extracting the JWT token from the HTTP request.
-   * @param token the HTTP request
-   * @return String the JWT token
+   * Extracts the JWT token from the Authorization header of a request.
+   * @param request the HTTP servlet request
+   * @return the bearer token or null if not found
    */
-  String getBearerTokenFrom(HttpServletRequest token);
+  String getBearerTokenFrom(HttpServletRequest request);
 
   /**
-   * This method is responsible for generating a JWT token from an authentication object.
+   * Generates a token from a Spring Security Authentication object.
    * @param authentication the authentication object
-   * @return String the JWT token
-   * @see Authentication
+   * @return the JWT token
    */
   String generateToken(Authentication authentication);
+
+  /**
+   * Generates a JWT token from a custom JwtUserDetails implementation.
+   * @param userDetails the JWT user details
+   * @return the JWT token
+   */
+  String generateToken(JwtUserDetails userDetails);
+
+  /**
+   * Extracts the profileId claim from the JWT token.
+   * @param token the JWT token
+   * @return the profileId claim, or null if missing
+   */
+  Long getProfileIdFromToken(String token);
 }

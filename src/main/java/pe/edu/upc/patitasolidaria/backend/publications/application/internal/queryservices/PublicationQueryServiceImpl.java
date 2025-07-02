@@ -32,4 +32,9 @@ public class PublicationQueryServiceImpl implements PublicationQueryService {
     public List<Publication> handle(GetPublicationsByPetIdQuery query) {
         return publicationRepository.findByPetId(query.petId());
     }
+
+    @Override
+    public List<Publication> handle(GetActivePublicationsQuery query) {
+        return publicationRepository.findByIsActiveTrue();
+    }
 }

@@ -4,6 +4,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.JwtUserDetails;
 import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.authorization.sfs.model.UserDetailsImpl;
 import pe.edu.upc.patitasolidaria.backend.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 
@@ -29,8 +30,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
   @Override
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
     var user = userRepository.findByUsername(username)
-        .orElseThrow(
-            () -> new UsernameNotFoundException("User not found with username: " + username));
-    return UserDetailsImpl.build(user);
+            .orElseThrow(
+                    () -> new UsernameNotFoundException("User not found with username: " + username));
+
+    return new JwtUserDetails(
+            user.getUsername(),
+            user.getPassword(),
+            user.getProfileId() // 👈 asegúrate que `User` tenga este método
+    );
   }
 }

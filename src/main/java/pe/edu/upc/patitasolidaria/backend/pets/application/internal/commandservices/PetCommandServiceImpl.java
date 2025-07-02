@@ -7,6 +7,8 @@ import pe.edu.upc.patitasolidaria.backend.pets.domain.model.commands.UpdatePetCo
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.commands.DeletePetCommand;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.services.PetCommandService;
 import pe.edu.upc.patitasolidaria.backend.pets.infrastructure.persistence.jpa.repositories.PetRepository;
+import pe.edu.upc.patitasolidaria.backend.profiles.infrastructure.persistence.jpa.repositories.ProfileRepository;
+import pe.edu.upc.patitasolidaria.backend.profiles.domain.model.aggregates.Profile;
 
 import java.util.Optional;
 
@@ -14,19 +16,28 @@ import java.util.Optional;
 public class PetCommandServiceImpl implements PetCommandService {
 
     private final PetRepository petRepository;
+    private final ProfileRepository profileRepository;
 
-    public PetCommandServiceImpl(PetRepository petRepository) {
+    public PetCommandServiceImpl(PetRepository petRepository, ProfileRepository profileRepository) {
         this.petRepository = petRepository;
+        this.profileRepository = profileRepository;
     }
 
     @Override
     public Long handle(CreatePetCommand command) {
-        var pet = new Pet(command);
+        // 1. Obtener el profile
+        Profile profile = profileRepository.findById(command.profileId())
+                .orElseThrow(() -> new IllegalArgumentException("Profile with id " + command.profileId() + " not found"));
+
+        // 2. Crear pet con el profile
+        Pet pet = new Pet(command, profile);
+
         try {
             this.petRepository.save(pet);
         } catch (Exception e) {
             throw new IllegalArgumentException("Error while saving pet: " + e.getMessage());
         }
+
         return pet.getId();
     }
 
