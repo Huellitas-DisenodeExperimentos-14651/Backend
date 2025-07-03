@@ -78,7 +78,7 @@ public class Pet extends AuditableAbstractAggregateRoot<Pet> {
         this.photo = command.photo();
         this.breed = new Breed(command.breed());
         this.size = command.size();
-        this.status = PetStatus.AVAILABLE;
+        this.status = command.status();
         this.description = command.description();
         this.healthStatus = new HealthStatus(command.healthStatus());
         this.vaccinationStatus = new VaccinationStatus(command.vaccinationStatus());
