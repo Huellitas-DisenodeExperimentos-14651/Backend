@@ -36,6 +36,22 @@ public class Donation {
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
+    // Campos adicionales para campañas (NO se persistirán si no están mapeados con @Column)
+    @Transient
+    private String type;
+
+    @Transient
+    private String title;
+
+    @Transient
+    private String description;
+
+    @Transient
+    private String contactInfo;
+
+    @Transient
+    private String imageUrl;
+
     public Donation() {
         // JPA requires a no-args constructor
     }
@@ -48,7 +64,7 @@ public class Donation {
         this.createdAt = LocalDateTime.now();
     }
 
-    // Getters y Setters opcionales si usas Lombok puedes evitarlos
+    // Getters y Setters
     public Long getId() {
         return id;
     }
@@ -89,5 +105,55 @@ public class Donation {
         this.donorName = donorName;
     }
 
-}
+    // --- Métodos nuevos para campañas ---
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getContactInfo() {
+        return contactInfo;
+    }
+
+    public void setContactInfo(String contactInfo) {
+        this.contactInfo = contactInfo;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+    private String address;
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+}
