@@ -36,7 +36,11 @@ public class TokenServiceImpl implements BearerTokenService {
 
   // ✅ NUEVO MÉTODO que usa JwtUserDetails directamente
   public String generateToken(JwtUserDetails userDetails) {
-    return buildTokenWithDefaultParameters(userDetails.getUsername(), userDetails.getProfileId());
+    return buildTokenWithDefaultParameters(
+            userDetails.getUsername(),
+            userDetails.getProfileId(),
+            userDetails.getRole() // 👈 Aquí usamos el nuevo campo
+    );
   }
 
   // ✅ IMPLEMENTACIÓN OBLIGATORIA DEL MÉTODO DE LA INTERFAZ
@@ -55,7 +59,7 @@ public class TokenServiceImpl implements BearerTokenService {
   }
 
   // ✅ GENERACIÓN DEL JWT CON profileId COMO CLAIM
-  private String buildTokenWithDefaultParameters(String username, Long profileId) {
+  private String buildTokenWithDefaultParameters(String username, Long profileId, String role) {
     var issuedAt = new Date();
     var expiration = DateUtils.addDays(issuedAt, expirationDays);
     var key = getSigningKey();
@@ -63,6 +67,7 @@ public class TokenServiceImpl implements BearerTokenService {
     return Jwts.builder()
             .subject(username)
             .claim("profileId", profileId)
+            .claim("role", role) // ✅ Ahora sí puedes usarlo
             .issuedAt(issuedAt)
             .expiration(expiration)
             .signWith(key)

@@ -10,6 +10,7 @@ import pe.edu.upc.patitasolidaria.backend.iam.domain.model.aggregates.JwtUserDet
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.commands.DeletePetCommand;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.queries.GetAllPetsQuery;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.model.queries.GetPetByIdQuery;
+import pe.edu.upc.patitasolidaria.backend.pets.domain.model.queries.GetPetsByProfileIdQuery;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.services.PetCommandService;
 import pe.edu.upc.patitasolidaria.backend.pets.domain.services.PetQueryService;
 import pe.edu.upc.patitasolidaria.backend.pets.interfaces.rest.resources.CreatePetResource;
@@ -96,5 +97,17 @@ public class PetController {
         var deletePetCommand = new DeletePetCommand(petId);
         this.petCommandService.handle(deletePetCommand);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/profile/{profileId}")
+    public ResponseEntity<List<PetResource>> getPetsByProfileId(@PathVariable Long profileId) {
+        var query = new GetPetsByProfileIdQuery(profileId);
+        var pets = petQueryService.handle(query);
+
+        var resources = pets.stream()
+                .map(PetResourceFromEntityAssembler::toResourceFromEntity)
+                .toList();
+
+        return ResponseEntity.ok(resources);
     }
 }

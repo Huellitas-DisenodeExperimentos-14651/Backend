@@ -32,4 +32,9 @@ public class PetQueryServiceImpl implements PetQueryService {
     public List<Pet> handle(GetPetsByStatusQuery query) {
         return petRepository.findByStatus(query.status());
     }
+
+    @Override
+    public List<Pet> handle(GetPetsByProfileIdQuery query) {
+        return petRepository.findByProfileId(query.profileId());
+    }
 }

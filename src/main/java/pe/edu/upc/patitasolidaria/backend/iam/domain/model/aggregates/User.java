@@ -41,7 +41,7 @@ public class User extends AuditableAbstractAggregateRoot<User> {
   private Set<Role> roles;
 
   // 👇 Nueva relación con Profile
-  @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+  @OneToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
   @JoinColumn(name = "profile_id", referencedColumnName = "id")
   private Profile profile;
 

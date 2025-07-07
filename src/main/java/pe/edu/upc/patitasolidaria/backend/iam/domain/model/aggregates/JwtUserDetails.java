@@ -11,15 +11,22 @@ public class JwtUserDetails implements UserDetails {
     private final String username;
     private final String password;
     private final Long profileId;
+    private final String role;
 
-    public JwtUserDetails(String username, String password, Long profileId) {
+
+    public JwtUserDetails(String username, String password, Long profileId, String role) {
         this.username = username;
         this.password = password;
         this.profileId = profileId;
+        this.role = role;
     }
 
     public Long getProfileId() {
         return profileId;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     @Override

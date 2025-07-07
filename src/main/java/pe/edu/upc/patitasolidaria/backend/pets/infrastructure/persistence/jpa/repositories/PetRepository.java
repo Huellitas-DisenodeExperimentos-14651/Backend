@@ -10,4 +10,5 @@ import java.util.List;
 @Repository
 public interface PetRepository extends JpaRepository<Pet, Long> {
     List<Pet> findByStatus(PetStatus status);
+    List<Pet> findByProfileId(Long profileId);
 }

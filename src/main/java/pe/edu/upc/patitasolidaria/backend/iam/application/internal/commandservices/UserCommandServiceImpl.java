@@ -69,11 +69,13 @@ public class UserCommandServiceImpl implements UserCommandService {
     if (profile == null)
       throw new RuntimeException("User has no associated profile");
 
-    // Construir el JWT con username y profileId
+    var roleName = profile.getRole().name();
+
     var jwtUserDetails = new JwtUserDetails(
             user.get().getUsername(),
             user.get().getPassword(),
-            profile.getId()
+            profile.getId(),
+            roleName
     );
 
     var token = tokenService.generateToken(jwtUserDetails);
