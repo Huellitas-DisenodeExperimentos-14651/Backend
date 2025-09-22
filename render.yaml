@@ -4,14 +4,13 @@ services:
     env: docker
     plan: free
     dockerfilePath: ./Dockerfile
-    buildCommand: ./mvnw clean package -DskipTests
-    startCommand: java -jar target/BackEnd-0.0.1-SNAPSHOT.jar
     envVars:
       - key: JDBC_DATABASE_URL
-        value: "jdbc:postgresql://dpg-d1i8gfer433s73a5mn4g-a.oregon-postgres.render.com:5432/patita_solidaria_7m8j"
+        value: jdbc:postgresql://dpg-d38dha15pdvs738fum70-a:5432/huellitas_ifw5
       - key: JDBC_DATABASE_USERNAME
-        value: "admin_patita"
+        value: huellitas_ifw5_user
       - key: JDBC_DATABASE_PASSWORD
-        value: "m2qa5P8QmDDlVUzqOEpAHYqix5nJNHzx"
+        value: 9fi6UYFZ2ykwGrqJRwEkWxodBuFq5vv2
       - key: JWT_SECRET
-        value: "Qv9wX8ZrT2pV6sMaY4tF3cJeL1kD0hBn"
+        value: Qv9wX8ZrT2pV6sMaY4tF3cJe1kD0hBn
+
