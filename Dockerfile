@@ -8,7 +8,7 @@ WORKDIR /app
 COPY .mvn/ .mvn
 COPY mvnw pom.xml ./
 
-# Dale permisos de ejecución al wrapper (por si acaso)
+# Dale permisos de ejecución al wrapper
 RUN chmod +x mvnw
 
 # Descarga las dependencias
@@ -18,8 +18,11 @@ RUN ./mvnw dependency:go-offline
 COPY . .
 RUN ./mvnw clean package -DskipTests
 
-# Expone el puerto que usa tu app
+# Expone el puerto (Render lo ignora, pero ayuda a documentar)
 EXPOSE 8080
 
+# Copiamos el JAR generado y lo renombramos a un nombre fijo
+RUN cp target/*.jar app.jar
+
 # Comando para correr el JAR
-CMD ["java", "-jar", "target/BackEnd-0.0.1-SNAPSHOT.jar"]
+CMD ["java", "-jar", "app.jar"]
